@@ -1,12 +1,11 @@
 package shape
 
 import (
-	"github.com/civiledcode/MagicaToOBJ/shape"
-	"github.com/civiledcode/MagicaToOBJ/tools"
+	"github.com/civiledcode/govok/tools"
 )
 
 type Plane struct {
-	TriangleOne, TriangleTwo *shape.Triangle
+	TriangleOne, TriangleTwo *Triangle
 
 	Color tools.Color
 }
@@ -33,7 +32,7 @@ func (p *Plane) ConvertToArray() [12]float64 {
 }
 
 //TODO: Optimize the fuck outta this
-func toPointArray(t1 *shape.Triangle, t2 *shape.Triangle) ([]*tools.Vector, []*tools.Vector) {
+func toPointArray(t1 *Triangle, t2 *Triangle) ([]*tools.Vector, []*tools.Vector) {
 	array := t1.ToStream()
 	for _, item := range t2.ToStream() {
 		array = append(array, item)

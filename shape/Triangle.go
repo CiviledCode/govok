@@ -1,6 +1,6 @@
 package shape
 
-import "github.com/civiledcode/MagicaToOBJ/tools"
+import "github.com/civiledcode/govok/tools"
 
 type Triangle struct {
 	X, Y, Z tools.Vector

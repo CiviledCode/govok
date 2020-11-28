@@ -1,8 +1,8 @@
 package govok
 
 import (
-	"github.com/civiledcode/MagicaToOBJ/vox"
 	"github.com/civiledcode/govok/object"
+	"github.com/civiledcode/govok/vox"
 )
 
 /**
