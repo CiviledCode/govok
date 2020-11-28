@@ -1,7 +1,7 @@
 package tools
 
 type Vector struct {
-	X, Y, Z float64
+	X, Y, Z float32
 }
 
 func (v *Vector) Equals(h *Vector) bool {
@@ -12,4 +12,8 @@ func (v *Vector) Equals(h *Vector) bool {
 		return true
 	}
 	return false
+}
+
+func (v *Vector) ToArray() []float32 {
+	return []float32{v.X, v.Y, v.Z}
 }

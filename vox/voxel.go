@@ -199,12 +199,12 @@ func combineVoxelFaces(faces []voxelFace) []voxelFace {
 
 func triangulateVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Triangle {
 	triangles := make([]*shape.Triangle, len(faces)*2)
-	k := float64(plane.Position) + float64(plane.Normal.Sign)*0.5
+	k := float32(plane.Position) + float32(plane.Normal.Sign)*0.5
 	for i, face := range faces {
-		i0 := float64(face.I0) - 0.5
-		j0 := float64(face.J0) - 0.5
-		i1 := float64(face.I1) + 0.5
-		j1 := float64(face.J1) + 0.5
+		i0 := float32(face.I0) - 0.5
+		j0 := float32(face.J0) - 0.5
+		i1 := float32(face.I1) + 0.5
+		j1 := float32(face.J1) + 0.5
 		var p1, p2, p3, p4 tools.Vector
 		switch plane.Normal.Axis {
 		case voxelX:
@@ -286,9 +286,9 @@ func outlineVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Line {
 					}
 				} else if start >= 0 {
 					end := i - 1
-					ai := float64(i0+start) - 0.5
-					bi := float64(i0+end) + 0.5
-					jj := float64(j0+j) + 0.5*float64(sign)
+					ai := float32(i0+start) - 0.5
+					bi := float32(i0+end) + 0.5
+					jj := float32(j0+j) + 0.5*float32(sign)
 					line := createVoxelOutline(plane, ai, jj, bi, jj)
 					lines = append(lines, line)
 					start = -1
@@ -306,9 +306,9 @@ func outlineVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Line {
 					}
 				} else if start >= 0 {
 					end := j - 1
-					aj := float64(j0+start) - 0.5
-					bj := float64(j0+end) + 0.5
-					ii := float64(i0+i) + 0.5*float64(sign)
+					aj := float32(j0+start) - 0.5
+					bj := float32(j0+end) + 0.5
+					ii := float32(i0+i) + 0.5*float32(sign)
 					line := createVoxelOutline(plane, ii, aj, ii, bj)
 					lines = append(lines, line)
 					start = -1
@@ -319,8 +319,8 @@ func outlineVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Line {
 	return lines
 }
 
-func createVoxelOutline(plane voxelPlane, i0, j0, i1, j1 float64) *shape.Line {
-	k := float64(plane.Position) + float64(plane.Normal.Sign)*0.5
+func createVoxelOutline(plane voxelPlane, i0, j0, i1, j1 float32) *shape.Line {
+	k := float32(plane.Position) + float32(plane.Normal.Sign)*0.5
 	var p1, p2 tools.Vector
 	switch plane.Normal.Axis {
 	case voxelX:

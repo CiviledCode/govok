@@ -52,10 +52,10 @@ func LoadVOX(path string) ([]Voxel, error) {
 
 	for i := range palette {
 		x := voxDefaultPalette[i]
-		r := float64((x>>0)&255) / 255
-		g := float64((x>>8)&255) / 255
-		b := float64((x>>16)&255) / 255
-		a := float64((x>>24)&255) / 255
+		r := float32((x>>0)&255) / 255
+		g := float32((x>>8)&255) / 255
+		b := float32((x>>16)&255) / 255
+		a := float32((x>>24)&255) / 255
 		palette[i] = tools.Color{r, g, b, a}
 	}
 
@@ -90,10 +90,10 @@ func LoadVOX(path string) ([]Voxel, error) {
 				if err := binary.Read(file, binary.LittleEndian, &color); err != nil {
 					return nil, err
 				}
-				r := float64(color[0]) / 255
-				g := float64(color[1]) / 255
-				b := float64(color[2]) / 255
-				a := float64(color[3]) / 255
+				r := float32(color[0]) / 255
+				g := float32(color[1]) / 255
+				b := float32(color[2]) / 255
+				a := float32(color[3]) / 255
 				palette[i+1] = tools.Color{r, g, b, a}
 			}
 		default:
