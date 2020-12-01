@@ -7,7 +7,7 @@ import (
 type Plane struct {
 	TriangleOne, TriangleTwo *Triangle
 
-	Color *tools.Color
+	Color *tools.Texture
 }
 
 const (
@@ -21,27 +21,8 @@ func (p *Plane) ConvertToArray() []float32 {
 
 	values, mapp := toPointArray(p.TriangleOne, p.TriangleTwo)
 
-	var needed uint8
-
 	for i := 0; i < len(mapp); i++ {
-		switch needed {
-		case 0, 2:
-			if mapp[i] == UNIQUE {
-				if needed == 2 {
-					needed = 0
-					continue
-				}
-				array = append(array, values[i].ToArray()...)
-			}
-		case 1, 3:
-			if mapp[i] == COMMON {
-				if needed == 3 {
-					needed = 1
-					continue
-				}
-				array = append(array, values[i].ToArray()...)
-			}
-		}
+		array = append(array, values[i].ToArray()...)
 	}
 
 	return array
