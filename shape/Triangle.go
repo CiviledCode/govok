@@ -5,7 +5,7 @@ import "github.com/civiledcode/govok/tools"
 type Triangle struct {
 	X, Y, Z tools.Vector
 
-	Color tools.Color
+	Color tools.Texture
 }
 
 func (t *Triangle) ToStream() []*tools.Vector {

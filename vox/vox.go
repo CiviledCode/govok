@@ -48,15 +48,15 @@ func LoadVOX(path string) ([]Voxel, error) {
 	}
 
 	var voxVoxels []VOXVoxel
-	var palette [256]tools.Color
+	var palette [256]tools.Texture
 
 	for i := range palette {
 		x := voxDefaultPalette[i]
-		r := float32((x>>0)&255) / 255
-		g := float32((x>>8)&255) / 255
-		b := float32((x>>16)&255) / 255
-		a := float32((x>>24)&255) / 255
-		palette[i] = tools.Color{r, g, b, a}
+		r := uint8((x>>0)&255) / 255
+		g := uint8((x>>8)&255) / 255
+		b := uint8((x>>16)&255) / 255
+		a := uint8((x>>24)&255) / 255
+		palette[i] = tools.Texture{r, g, b, a, 0, 0, ""}
 	}
 
 	for {
@@ -90,11 +90,11 @@ func LoadVOX(path string) ([]Voxel, error) {
 				if err := binary.Read(file, binary.LittleEndian, &color); err != nil {
 					return nil, err
 				}
-				r := float32(color[0]) / 255
-				g := float32(color[1]) / 255
-				b := float32(color[2]) / 255
-				a := float32(color[3]) / 255
-				palette[i+1] = tools.Color{r, g, b, a}
+				r := color[0] / 255
+				g := color[1] / 255
+				b := color[2] / 255
+				a := color[3] / 255
+				palette[i+1] = tools.Texture{r, g, b, a, 0, 0, ""}
 			}
 		default:
 			file.Seek(int64(chunk.ContentBytes), 1)

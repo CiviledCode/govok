@@ -9,7 +9,7 @@ import (
 
 type Voxel struct {
 	X, Y, Z int
-	Color   tools.Color
+	Color   tools.Texture
 }
 
 type voxelAxis int
@@ -38,7 +38,7 @@ var (
 type voxelPlane struct {
 	Normal   voxelNormal
 	Position int
-	Color    tools.Color
+	Color    tools.Texture
 }
 
 type voxelFace struct {
