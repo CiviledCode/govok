@@ -5,7 +5,7 @@ import (
 	"github.com/civiledcode/govok/tools"
 )
 
-// THIS CODE BELONDS TO https://github.com/fogleman/fauxgl
+// This code was forked from https://github.com/fogleman/fauxgl
 
 type Voxel struct {
 	X, Y, Z int
@@ -46,7 +46,7 @@ type voxelFace struct {
 	I1, J1 int
 }
 
-func TriangulateVoxels(voxels []Voxel) ([]*shape.Triangle, []*shape.Line) {
+func TriangulateVoxels(voxels []Voxel) []*shape.Triangle {
 	type key struct {
 		X, Y, Z int
 	}
@@ -93,16 +93,14 @@ func TriangulateVoxels(voxels []Voxel) ([]*shape.Triangle, []*shape.Line) {
 	}
 
 	var triangles []*shape.Triangle
-	var lines []*shape.Line
 
 	// find large rectangles, triangulate and outline
 	for plane, faces := range planeFaces {
 		faces = combineVoxelFaces(faces)
-		lines = append(lines, outlineVoxelFaces(plane, faces)...)
 		triangles = append(triangles, triangulateVoxelFaces(plane, faces)...)
 	}
 
-	return triangles, lines
+	return triangles
 }
 
 func combineVoxelFaces(faces []voxelFace) []voxelFace {
@@ -232,106 +230,4 @@ func triangulateVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Triangl
 		triangles[i*2+1] = &t2
 	}
 	return triangles
-}
-
-func outlineVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Line {
-	// determine bounding box
-	i0 := faces[0].I0
-	j0 := faces[0].J0
-	i1 := faces[0].I1
-	j1 := faces[0].J1
-	for _, f := range faces {
-		if f.I0 < i0 {
-			i0 = f.I0
-		}
-		if f.J0 < j0 {
-			j0 = f.J0
-		}
-		if f.I1 > i1 {
-			i1 = f.I1
-		}
-		if f.J1 > j1 {
-			j1 = f.J1
-		}
-	}
-	// padding
-	i0--
-	j0--
-	i1++
-	j1++
-	// create array
-	nj := j1 - j0 + 1
-	ni := i1 - i0 + 1
-	a := make([][]bool, nj)
-	for j := range a {
-		a[j] = make([]bool, ni)
-	}
-	// populate array
-	for _, f := range faces {
-		for j := f.J0; j <= f.J1; j++ {
-			for i := f.I0; i <= f.I1; i++ {
-				a[j-j0][i-i0] = true
-			}
-		}
-	}
-	var lines []*shape.Line
-	for sign := -1; sign <= 1; sign += 2 {
-		// find "horizontal" lines
-		for j := 1; j < nj-1; j++ {
-			start := -1
-			for i := 0; i < ni; i++ {
-				if a[j][i] && !a[j+sign][i] {
-					if start < 0 {
-						start = i
-					}
-				} else if start >= 0 {
-					end := i - 1
-					ai := float32(i0+start) - 0.5
-					bi := float32(i0+end) + 0.5
-					jj := float32(j0+j) + 0.5*float32(sign)
-					line := createVoxelOutline(plane, ai, jj, bi, jj)
-					lines = append(lines, line)
-					start = -1
-				}
-			}
-
-		}
-		// find "vertical" lines
-		for i := 1; i < ni-1; i++ {
-			start := -1
-			for j := 0; j < nj; j++ {
-				if a[j][i] && !a[j][i+sign] {
-					if start < 0 {
-						start = j
-					}
-				} else if start >= 0 {
-					end := j - 1
-					aj := float32(j0+start) - 0.5
-					bj := float32(j0+end) + 0.5
-					ii := float32(i0+i) + 0.5*float32(sign)
-					line := createVoxelOutline(plane, ii, aj, ii, bj)
-					lines = append(lines, line)
-					start = -1
-				}
-			}
-		}
-	}
-	return lines
-}
-
-func createVoxelOutline(plane voxelPlane, i0, j0, i1, j1 float32) *shape.Line {
-	k := float32(plane.Position) + float32(plane.Normal.Sign)*0.5
-	var p1, p2 tools.Vector
-	switch plane.Normal.Axis {
-	case voxelX:
-		p1 = tools.Vector{k, i0, j0}
-		p2 = tools.Vector{k, i1, j1}
-	case voxelY:
-		p1 = tools.Vector{i0, k, j0}
-		p2 = tools.Vector{i1, k, j1}
-	case voxelZ:
-		p1 = tools.Vector{i0, j0, k}
-		p2 = tools.Vector{i1, j1, k}
-	}
-	return &shape.Line{p1, p2}
 }

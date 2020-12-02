@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-// THIS CODE BELONGS TO https://github.com/fogleman/fauxgl
+// This code was forked from https://github.com/fogleman/fauxgl
 
 type VOXHeader struct {
 	Magic   [4]byte
@@ -27,6 +27,9 @@ type VOXVoxel struct {
 	X, Y, Z, I uint8
 }
 
+/**
+	LoadVOX loads all of the voxels from a location and returns them
+ */
 func LoadVOX(path string) ([]Voxel, error) {
 	// open file
 	file, err := os.Open(path)
@@ -110,13 +113,15 @@ func LoadVOX(path string) ([]Voxel, error) {
 }
 
 /**
-Load VOX file and convert to the most optimal triangular mesh
+	LoadVOXAndTriangulate loads the voxels and converts them into triangles
+
+	path: The path to the file we are triangulating
 */
-func LoadVOXAndTriangulate(path string) ([]*shape.Triangle, []*shape.Line) {
+func LoadVOXAndTriangulate(path string) []*shape.Triangle {
 	vox, err := LoadVOX(path)
 	if err != nil {
 		fmt.Println(err)
-		return nil, nil
+		return nil
 	}
 	return TriangulateVoxels(vox)
 }

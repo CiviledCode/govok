@@ -29,8 +29,8 @@ func (p *Plane) ConvertToArray() []float32 {
 }
 
 func toPointArray(t1 *Triangle, t2 *Triangle) ([]*tools.Vector, [6]int) {
-	array := t1.ToStream()
-	for _, item := range t2.ToStream() {
+	array := t1.ToArray()
+	for _, item := range t2.ToArray() {
 		array = append(array, item)
 	}
 
