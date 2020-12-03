@@ -43,7 +43,7 @@ func (g *Govok) ConvertAndLoad() object.Content {
 func (g *Govok) convert() ([]*shape.Plane, error) {
 	switch g.Format {
 	case VOX:
-		tr, _ := vox.LoadVOXAndTriangulate(g.File)
+		tr := vox.LoadVOXAndTriangulate(g.File)
 
 		var planes []*shape.Plane
 		for i := 0; i < len(tr); i += 2 {
@@ -74,7 +74,7 @@ func (g *Govok) convert() ([]*shape.Plane, error) {
 				}
 			}
 		}
-		tr, _ := vox.TriangulateVoxels(voxels)
+		tr := vox.TriangulateVoxels(voxels)
 		var planes []*shape.Plane
 		for i := 0; i < len(tr); i += 2 {
 			plane := shape.Plane{TriangleOne: tr[i], TriangleTwo: tr[i+1], Color: &tr[i].Color}

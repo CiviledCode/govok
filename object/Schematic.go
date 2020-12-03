@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-/**
+/*
 	LoadColorMap loads all of the texture data of a specific schematic using json.Unmarshal.
 	The name is always the namespace ID of the block we are mapping the texture to
 
