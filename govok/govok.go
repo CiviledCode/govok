@@ -41,15 +41,10 @@ func (g *Govok) ConvertAndLoad() object.Content {
 }
 
 func (g *Govok) convert() ([]*shape.Plane, error) {
+	//TODO: Errors
 	switch g.Format {
 	case VOX:
-		tr := vox.LoadVOXAndTriangulate(g.File)
-
-		var planes []*shape.Plane
-		for i := 0; i < len(tr); i += 2 {
-			plane := shape.Plane{TriangleOne: tr[i], TriangleTwo: tr[i+1], Color: &tr[i].Color}
-			planes = append(planes, &plane)
-		}
+		planes := vox.LoadVOXToPlanes(g.File)
 
 		return planes, nil
 	case SCHEMATIC:
@@ -74,14 +69,8 @@ func (g *Govok) convert() ([]*shape.Plane, error) {
 				}
 			}
 		}
-		tr := vox.TriangulateVoxels(voxels)
-		var planes []*shape.Plane
-		for i := 0; i < len(tr); i += 2 {
-			plane := shape.Plane{TriangleOne: tr[i], TriangleTwo: tr[i+1], Color: &tr[i].Color}
-			planes = append(planes, &plane)
-		}
 
-		return planes, nil
+		return vox.PlaneVoxels(voxels), nil
 	}
 
 	return nil, nil
