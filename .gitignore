@@ -4,3 +4,4 @@
 /.idea/workspace.xml
 /models/
 /main.go
+*.govok
