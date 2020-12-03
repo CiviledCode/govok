@@ -46,7 +46,7 @@ type voxelFace struct {
 	I1, J1 int
 }
 
-func TriangulateVoxels(voxels []Voxel) []*shape.Triangle {
+func PlaneVoxels(voxels []Voxel) []*shape.Plane {
 	type key struct {
 		X, Y, Z int
 	}
@@ -92,15 +92,15 @@ func TriangulateVoxels(voxels []Voxel) []*shape.Triangle {
 		}
 	}
 
-	var triangles []*shape.Triangle
+	var planes []*shape.Plane
 
 	// find large rectangles, triangulate and outline
 	for plane, faces := range planeFaces {
 		faces = combineVoxelFaces(faces)
-		triangles = append(triangles, triangulateVoxelFaces(plane, faces)...)
+		planes = append(planes, voxelFacesToPlanes(plane, faces)...)
 	}
 
-	return triangles
+	return planes
 }
 
 func combineVoxelFaces(faces []voxelFace) []voxelFace {
@@ -195,8 +195,8 @@ func combineVoxelFaces(faces []voxelFace) []voxelFace {
 	return result
 }
 
-func triangulateVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Triangle {
-	triangles := make([]*shape.Triangle, len(faces)*2)
+func voxelFacesToPlanes(plane voxelPlane, faces []voxelFace) []*shape.Plane {
+	planes := make([]*shape.Plane, len(faces))
 	k := float32(plane.Position) + float32(plane.Normal.Sign)*0.5
 	for i, face := range faces {
 		i0 := float32(face.I0) - 0.5
@@ -224,10 +224,7 @@ func triangulateVoxelFaces(plane voxelPlane, faces []voxelFace) []*shape.Triangl
 		if plane.Normal.Sign < 0 {
 			p1, p2, p3, p4 = p4, p3, p2, p1
 		}
-		t1 := shape.Triangle{p1, p2, p3, plane.Color}
-		t2 := shape.Triangle{p1, p3, p4, plane.Color}
-		triangles[i*2+0] = &t1
-		triangles[i*2+1] = &t2
+		planes[i] = &shape.Plane{p1, p2, p3, p4, &plane.Color}
 	}
-	return triangles
+	return planes
 }

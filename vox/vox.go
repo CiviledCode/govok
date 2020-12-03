@@ -8,6 +8,7 @@ import (
 	"github.com/civiledcode/govok/tools"
 	"io"
 	"os"
+	"strconv"
 )
 
 // This code was forked from https://github.com/fogleman/fauxgl
@@ -27,6 +28,7 @@ type VOXVoxel struct {
 	X, Y, Z, I uint8
 }
 
+//TODO: Material loading and better color palette handling
 /**
 	LoadVOX loads all of the voxels from a location and returns them
  */
@@ -55,11 +57,11 @@ func LoadVOX(path string) ([]Voxel, error) {
 
 	for i := range palette {
 		x := voxDefaultPalette[i]
-		r := uint8((x>>0)&255) / 255
-		g := uint8((x>>8)&255) / 255
-		b := uint8((x>>16)&255) / 255
-		a := uint8((x>>24)&255) / 255
-		palette[i] = tools.Texture{r, g, b, a, 0, 0, ""}
+		r := float32((x>>0)&255) / 255
+		g := float32((x>>8)&255) / 255
+		b := float32((x>>16)&255) / 255
+		a := float32((x>>24)&255) / 255
+		palette[i] = tools.Texture{r, g, b, a, 0, 0, strconv.FormatInt(int64(i), 10)}
 	}
 
 	for {
@@ -89,7 +91,7 @@ func LoadVOX(path string) ([]Voxel, error) {
 			}
 		case "RGBA":
 			for i := 0; i <= 254; i++ {
-				var color [4]uint8
+				var color [4]float32
 				if err := binary.Read(file, binary.LittleEndian, &color); err != nil {
 					return nil, err
 				}
@@ -97,7 +99,7 @@ func LoadVOX(path string) ([]Voxel, error) {
 				g := color[1] / 255
 				b := color[2] / 255
 				a := color[3] / 255
-				palette[i+1] = tools.Texture{r, g, b, a, 0, 0, ""}
+				palette[i+1] = tools.Texture{r, g, b, a, 0, 0, strconv.FormatInt(int64(i), 10)}
 			}
 		default:
 			file.Seek(int64(chunk.ContentBytes), 1)
@@ -108,22 +110,22 @@ func LoadVOX(path string) ([]Voxel, error) {
 	for i, v := range voxVoxels {
 		voxels[i] = Voxel{int(v.X), int(v.Y), int(v.Z), palette[v.I]}
 	}
-
+	fmt.Printf("%v", palette)
 	return voxels, nil
 }
 
 /**
-	LoadVOXAndTriangulate loads the voxels and converts them into triangles
+	LoadVOXToPlanes loads the voxels and converts them into Planes
 
-	path: The path to the file we are triangulating
+	path: The path to the file we are converting to planes
 */
-func LoadVOXAndTriangulate(path string) []*shape.Triangle {
+func LoadVOXToPlanes(path string) []*shape.Plane {
 	vox, err := LoadVOX(path)
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
-	return TriangulateVoxels(vox)
+	return PlaneVoxels(vox)
 }
 
 var voxDefaultPalette = []uint{
